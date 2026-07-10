@@ -38,7 +38,8 @@ jobs:
   deploy:
     needs: test                              # só roda se "test" passar
     if: github.ref == 'refs/heads/main'       # só quando for push direto na main
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest                    # Actions de Pages usam bash internamente;
+                                               # incompatível com Windows self-hosted (ver job local-check abaixo)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -55,3 +56,17 @@ jobs:
       - name: Publicar no GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  local-check:
+    needs: test
+    runs-on: self-hosted        # este job roda de verdade na sua máquina Windows
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Rodar um comando local (PowerShell)
+        shell: pwsh
+        run: |
+          Write-Host "Rodando na máquina: $env:COMPUTERNAME"
+          Write-Host "Diretório atual: $PWD"
+          Get-ChildItem
