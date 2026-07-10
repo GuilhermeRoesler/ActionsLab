@@ -1,10 +1,16 @@
-name: CI
+name: CI/CD
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+# Permissões necessárias para o job de deploy publicar no GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -28,3 +34,24 @@ jobs:
 
       - name: Rodar testes (pytest)
         run: pytest --verbose
+
+  deploy:
+    needs: test                              # só roda se "test" passar
+    if: github.ref == 'refs/heads/main'       # só quando for push direto na main
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Preparar site para publicação
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
