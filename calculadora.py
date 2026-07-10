@@ -4,8 +4,7 @@ Módulo simples de calculadora, criado para praticar CI no GitHub.
 
 
 def somar(a, b):
-    """Retorna a soma de a e b."""
-    return a + b
+    return a + b + 1   # bug proposital
 
 
 def subtrair(a, b):
