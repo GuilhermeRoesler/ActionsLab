@@ -1,0 +1,63 @@
+name: CD — GitHub Pages
+
+on:
+  # Dispara após o workflow CI concluir com sucesso na main
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  # Também permite deploy manual (ex.: só mudou site/)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/cd.yml"
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # Em workflow_run, só publica se o CI passou
+  gate:
+    name: Gate (CI verde)
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: CI check
+        run: echo "Gate OK — seguindo para deploy"
+
+  deploy:
+    name: Deploy production (Pages)
+    needs: gate
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Em workflow_run o checkout padrão é o commit do workflow file;
+          # apontamos para o SHA que disparou o CI.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ActionsLab</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --text: #e7ecf3;
+      --muted: #9aa8bc;
+      --accent: #3dd6c3;
+      --accent-dim: #2a9d8f;
+      --line: #2c3a4f;
+      --warn: #f4a261;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1b3a4b 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #243b55 0%, transparent 50%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .brand {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.2;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0 0 28px;
+      max-width: 38em;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(61, 214, 195, 0.12);
+      border: 1px solid rgba(61, 214, 195, 0.35);
+      color: var(--accent);
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 36px;
+    }
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(61, 214, 195, 0.25);
+    }
+    section {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+    }
+    section h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+    section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+    ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--text);
+    }
+    li { margin-bottom: 8px; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    a:hover { border-bottom-color: var(--accent-dim); }
+    code {
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 0.9em;
+      background: var(--panel);
+      padding: 0.15em 0.4em;
+      border: 1px solid var(--line);
+    }
+    .note {
+      background: var(--panel);
+      border-left: 3px solid var(--warn);
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    footer {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="brand">ActionsLab</p>
+    <h1>Deploy contínuo no ar</h1>
+    <p class="lead">
+      Esta página é o artefato de CD do laboratório: publicada automaticamente
+      no GitHub Pages depois que o CI (lint, testes, coverage e build Docker) passa na <code>main</code>.
+    </p>
+    <p class="status">production · GitHub Pages</p>
+
+    <section>
+      <h2>O que este lab cobre</h2>
+      <p>O aplicativo de apoio é só uma calculadora Python. O produto é o pipeline.</p>
+      <ul>
+        <li>CI com matrix (Python 3.11/3.12 + Windows)</li>
+        <li>Coverage gate, artifacts e reusable workflow</li>
+        <li>CD separado com environment <code>production</code></li>
+        <li>Security (<code>pip-audit</code> + CodeQL) e Dependabot</li>
+        <li>Release por tag <code>v*</code></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Como validar o fluxo</h2>
+      <p>
+        Edite <code>site/index.html</code> ou o código Python, faça push na <code>main</code>
+        e acompanhe a aba <strong>Actions</strong>. Se o CI falhar, esta página não atualiza.
+      </p>
+      <div class="note">
+        Documentação completa no repositório: README, <code>docs/conceitos.md</code> e exercícios guiados.
+      </div>
+    </section>
+
+    <footer>
+      Publicado pelo workflow <code>CD — GitHub Pages</code> · MIT License
+    </footer>
+  </main>
+</body>
+</html>
