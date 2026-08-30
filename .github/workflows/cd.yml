@@ -1,16 +1,12 @@
 name: CD — GitHub Pages
 
 on:
+  # Só depois do CI na main (evita deploy duplicado com push + workflow_run)
   workflow_run:
     workflows: ["CI"]
     types: [completed]
     branches: [main]
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "site/**"
-      - ".github/workflows/cd.yml"
 
 concurrency:
   group: pages
