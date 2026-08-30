@@ -8,7 +8,7 @@ Registro do que o laboratório passou a cobrir (foco em práticas de CI/CD, não
 - Reusable workflow com **matrix** (Python 3.11/3.12, Ubuntu + Windows)
 - Coverage gate (≥ 80%), JUnit/HTML **artifacts**
 - Build **Docker** no CI (sem push de imagem)
-- CD via `workflow_run` + environment **production** (GitHub Pages)
+- CD via `workflow_run` + environment **github-pages**
 - **Dependabot** (pip + Actions), **pip-audit** e **CodeQL**
 - Path filters, concurrency, `workflow_dispatch`
 - Documentação: conceitos, glossário, branch protection, 5 exercícios

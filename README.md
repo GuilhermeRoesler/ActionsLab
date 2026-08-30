@@ -1,7 +1,7 @@
 # ActionsLab
 
-[![CI](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/ci.yml/badge.svg)](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/ci.yml)
-[![Security](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/security.yml/badge.svg)](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/security.yml)
+[![CI](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/ci.yml)
+[![Security](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/GuilhermeRoesler/ActionsLab/actions/workflows/security.yml)
 [![Pages](https://img.shields.io/badge/CD-GitHub%20Pages-3dd6c3?logo=github)](https://guilhermeroesler.github.io/ActionsLab/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -20,7 +20,7 @@ A calculadora Python é só o pretexto. O produto deste repositório é o **pipe
 | Coverage ≥ 80% + artifacts | pytest-cov + `upload-artifact` |
 | Build de imagem sem push | job `docker` |
 | CD após CI verde | `cd.yml` + `workflow_run` |
-| Environment `production` | GitHub Pages |
+| Environment `github-pages` | GitHub Pages |
 | Security | `pip-audit` + CodeQL + Dependabot |
 | Release | tags `v*` → `release.yml` |
 | Exercícios guiados | [`docs/exercicios/`](docs/exercicios/) |
@@ -79,7 +79,7 @@ docker build -t actionslab:local .
 ### Habilitar Pages (uma vez)
 
 1. **Settings → Pages** → Source: **GitHub Actions**
-2. (Recomendado) **Settings → Environments** → criar `production`
+2. Confirme o environment `github-pages` (criado automaticamente no primeiro deploy)
 3. Push na `main` e confira a URL em Settings → Pages
 
 ### Branch protection

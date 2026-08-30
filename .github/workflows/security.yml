@@ -3,20 +3,8 @@ name: Security
 on:
   push:
     branches: [main]
-    paths:
-      - "**.py"
-      - "requirements.txt"
-      - "pyproject.toml"
-      - "Dockerfile"
-      - ".github/workflows/security.yml"
   pull_request:
     branches: [main]
-    paths:
-      - "**.py"
-      - "requirements.txt"
-      - "pyproject.toml"
-      - "Dockerfile"
-      - ".github/workflows/security.yml"
   schedule:
     # Toda segunda-feira 09:00 UTC
     - cron: "0 9 * * 1"

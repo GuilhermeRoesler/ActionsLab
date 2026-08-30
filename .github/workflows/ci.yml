@@ -3,26 +3,12 @@ name: CI
 on:
   push:
     branches: [main]
-    paths:
-      - "**.py"
-      - "pyproject.toml"
-      - "requirements.txt"
-      - "Dockerfile"
-      - ".github/workflows/**"
-      - "tests/**"
   pull_request:
     branches: [main]
-    paths:
-      - "**.py"
-      - "pyproject.toml"
-      - "requirements.txt"
-      - "Dockerfile"
-      - ".github/workflows/**"
-      - "tests/**"
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -45,11 +31,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Lowercase image name
+        run: |
+          echo "IMAGE_TAG=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]'):ci" >> "$GITHUB_ENV"
+
       - name: Build (sem push — demonstração de build no CI)
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
-          tags: ghcr.io/${{ github.repository }}:ci
+          tags: ${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

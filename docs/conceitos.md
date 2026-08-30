@@ -13,7 +13,7 @@ Cada peça do laboratório mapeia para uma prática real de CI/CD.
 | Coverage gate | `--cov-fail-under=80` | Qualidade mínima como critério de merge |
 | Build de container | job `docker` no CI | Validar `Dockerfile` sem publicar |
 | Entrega Contínua | `.github/workflows/cd.yml` | Deploy automático após gate |
-| Environments | `production` no CD | Rastrear URL e proteger deploy |
+| Environments | `github-pages` no CD | Rastrear URL e proteger deploy |
 | `workflow_run` | CD escuta CI | Separar CI de CD com dependência |
 | `workflow_dispatch` | CI / CD / Security / Release | Disparo manual |
 | Security scanning | `security.yml` | `pip-audit` + CodeQL |

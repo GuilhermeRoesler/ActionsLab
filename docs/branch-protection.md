@@ -20,12 +20,13 @@ Em um repositório de portfólio/equipe, proteja `main` para que só entre códi
 
 ## Environments
 
-O workflow de CD usa o environment `production`:
+O workflow de CD usa o environment `github-pages` (o padrão do deploy do Pages):
 
-1. **Settings → Environments → New environment** → nome `production`
+1. Após o primeiro deploy bem-sucedido, ele aparece em **Settings → Environments**
 2. (Opcional) adicione **required reviewers** para simular aprovação humana antes do deploy
 3. Em **Settings → Pages**, source = **GitHub Actions**
 
+Evite criar um segundo environment (ex.: `production`) só para Pages — isso duplica a lista de Deployments.
 ## Por que isso importa no portfólio
 
 Branch protection + required checks mostram que você não só “tem um YAML”, mas entende **governança do pipeline**: nada vai para produção sem evidência automática.
