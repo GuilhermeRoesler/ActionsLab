@@ -1,0 +1,64 @@
+# Reusable workflow: lint + testes + coverage em matrix.
+# Chamado por ci.yml — demonstra "callable workflows" (DRY entre pipelines).
+name: Reusable — test suite
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifacts:
+        description: "Se true, publica junit.xml e htmlcov como artifacts"
+        type: boolean
+        default: true
+        required: false
+
+jobs:
+  test:
+    name: Lint & test (Python ${{ matrix.python-version }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.11", "3.12"]
+        include:
+          # Uma célula extra no Windows para mostrar matrix multi-OS
+          - os: windows-latest
+            python-version: "3.12"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ruff (lint)
+        run: ruff check .
+
+      - name: Pytest + coverage
+        run: >
+          pytest --verbose
+          --junitxml=junit.xml
+          --cov=calculadora
+          --cov-report=term-missing
+          --cov-report=xml
+          --cov-report=html
+          --cov-fail-under=80
+
+      - name: Upload test artifacts
+        if: ${{ inputs.upload-artifacts && always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-py${{ matrix.python-version }}-${{ matrix.os }}
+          path: |
+            junit.xml
+            coverage.xml
+            htmlcov/
+          if-no-files-found: ignore
+          retention-days: 14

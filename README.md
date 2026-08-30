@@ -1,58 +1,105 @@
-# CI/CD na Prática
+# GitHub Actions CI/CD Lab
 
-Projeto de exemplo para aprender Integração Contínua (CI) e Entrega/Deploy
-Contínuo (CD) com GitHub Actions.
+[![CI](https://github.com/GuilhermeRoesler/github-actions-ci-cd-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/GuilhermeRoesler/github-actions-ci-cd-lab/actions/workflows/ci.yml)
+[![Security](https://github.com/GuilhermeRoesler/github-actions-ci-cd-lab/actions/workflows/security.yml/badge.svg)](https://github.com/GuilhermeRoesler/github-actions-ci-cd-lab/actions/workflows/security.yml)
+[![Pages](https://img.shields.io/badge/CD-GitHub%20Pages-3dd6c3?logo=github)](https://guilhermeroesler.github.io/github-actions-ci-cd-lab/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Rodando manualmente (sem CI)
+Laboratório prático (e de portfólio) para aprender **CI/CD com GitHub Actions**.
 
-```bash
-pip install -r requirements.txt
-ruff check .
-pytest --verbose
+A calculadora Python é só o pretexto. O produto deste repositório é o **pipeline**: lint, testes em matrix, coverage gate, artifacts, build Docker, security scanning, Dependabot, deploy no GitHub Pages e releases por tag — com documentação e exercícios em português.
+
+## O que você pratica aqui
+
+| Prática | Implementação |
+|---------|----------------|
+| CI em toda push/PR | `.github/workflows/ci.yml` |
+| Matrix (Python 3.11/3.12 + Windows) | `reusable-test.yml` |
+| Reusable workflow | `workflow_call` |
+| Coverage ≥ 80% + artifacts | pytest-cov + `upload-artifact` |
+| Build de imagem sem push | job `docker` |
+| CD após CI verde | `cd.yml` + `workflow_run` |
+| Environment `production` | GitHub Pages |
+| Security | `pip-audit` + CodeQL + Dependabot |
+| Release | tags `v*` → `release.yml` |
+| Exercícios guiados | [`docs/exercicios/`](docs/exercicios/) |
+
+Diagrama e mapa completo: [`docs/conceitos.md`](docs/conceitos.md).
+
+```mermaid
+flowchart LR
+  A[Push / PR] --> B[CI]
+  B --> C[Matrix + coverage]
+  C --> D[Docker build]
+  D --> E{main?}
+  E -->|sim| F[CD Pages]
+  A --> G[Security]
+  H[Tag v*] --> I[Release]
 ```
 
-## Rodando com CI
+## Estrutura
 
-Basta dar push (ou abrir um Pull Request) para o GitHub. O workflow em
-`.github/workflows/ci.yml` roda automaticamente as mesmas etapas acima
-em uma máquina do GitHub, sem você precisar fazer nada manualmente.
+```
+.github/workflows/     # CI, CD, security, release, reusable
+.github/dependabot.yml
+docs/                  # conceitos, glossário, exercícios, branch protection
+site/                  # artefato publicado no Pages (CD)
+tests/                 # pytest parametrizado
+calculadora.py         # app de demonstração
+Dockerfile             # build validado no CI
+pyproject.toml         # tooling (ruff, coverage, pytest)
+```
 
-Veja o resultado na aba **Actions** do repositório.
+## Rodando localmente
 
-## CD: deploy automático
+Pré-requisitos: Python 3.11+.
 
-Além dos testes, o workflow tem um segundo job (`deploy`) que só roda
-**depois** que o job `test` passa (`needs: test`), e só quando o push é
-direto na branch `main`. Esse job publica o conteúdo da pasta `site/`
-no GitHub Pages — sem nenhuma ação manual.
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# Unix:    source .venv/bin/activate
+pip install -r requirements.txt
+ruff check .
+pytest --verbose --cov=calculadora --cov-report=term-missing --cov-fail-under=80
+```
 
-Para habilitar (só precisa fazer uma vez):
-1. No repositório, vá em **Settings → Pages**
-2. Em "Build and deployment" → "Source", selecione **GitHub Actions**
-3. Dê push na `main` — o Pages será publicado automaticamente
+(Opcional) build da imagem:
 
-A URL final aparece em **Settings → Pages** e também no resumo da
-execução, na aba Actions (job `deploy`).
+```bash
+docker build -t ci-cd-lab:local .
+```
 
-## Runner self-hosted
+## Pipelines no GitHub
 
-O job `local-check` roda em `runs-on: self-hosted`, ou seja, na sua
-própria máquina, em vez de uma VM temporária do GitHub. Para isso
-funcionar, você precisa ter o runner instalado e rodando localmente
-(via `run.cmd` ou como serviço com `svc.cmd install` + `svc.cmd start`).
+1. Push ou PR → workflow **CI** (e **Security**).
+2. CI verde na `main` → workflow **CD** publica `site/` no **GitHub Pages**.
+3. Tag `v1.2.3` → workflow **Release** cria a GitHub Release.
 
-**Por que o `deploy` continua em `ubuntu-latest`?** As Actions oficiais
-de GitHub Pages (`upload-pages-artifact`, `deploy-pages`) rodam scripts
-internos em `bash`, e o `bash` do Git for Windows interpreta `\` como
-caractere de escape — isso corrompe caminhos do Windows (que usam `\`)
-e quebra a execução. É uma incompatibilidade conhecida dessas Actions
-com runners Windows self-hosted, não um erro de configuração sua.
-Por isso o `local-check` foi criado como um job separado, simples e
-100% compatível com PowerShell, só para você ver o runner local em ação.
+### Habilitar Pages (uma vez)
 
-⚠️ Atenção: se o repositório for público, qualquer Pull Request de
-terceiros pode potencialmente executar código na sua máquina. Para
-este projeto de prática, prefira manter o repositório **privado**, ou
-mantenha o runner restrito a jobs que só rodam em push direto na
-`main` (como já está configurado aqui com `if: github.ref == ...`).
+1. **Settings → Pages** → Source: **GitHub Actions**
+2. (Recomendado) **Settings → Environments** → criar `production`
+3. Push na `main` e confira a URL em Settings → Pages
 
+### Branch protection
+
+Checklist em [`docs/branch-protection.md`](docs/branch-protection.md).
+
+## Documentação
+
+- [Mapa de conceitos](docs/conceitos.md)
+- [Glossário](docs/glossario.md)
+- [Exercícios](docs/exercicios/)
+- [Self-hosted (opcional — não use em repo público)](docs/self-hosted-opcional.md)
+- [Como contribuir](CONTRIBUTING.md)
+
+## Segurança
+
+- Não há runner **self-hosted** nos workflows ativos (risco em repositórios públicos).
+- Dependabot atualiza `pip` e `github-actions` semanalmente.
+- `security.yml` roda `pip-audit` e CodeQL (também via cron semanal).
+
+## Licença
+
+[MIT](LICENSE) © Guilherme Roesler
