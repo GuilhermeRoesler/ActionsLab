@@ -10,6 +10,8 @@ Laboratório prático (e de portfólio) para aprender **CI/CD com GitHub Actions
 
 A calculadora Python é só o pretexto. O produto deste repositório é o **pipeline**: lint, testes em matrix, coverage gate, artifacts, build Docker, security scanning, Dependabot, deploy no GitHub Pages e releases por tag — com documentação e exercícios em português.
 
+![Demo do site ActionsLab no GitHub Pages](docs/screenshots/demo.webp)
+
 ## O que você pratica aqui
 
 | Prática | Implementação |
